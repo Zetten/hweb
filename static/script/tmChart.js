@@ -1,19 +1,26 @@
-Highcharts.setOptions({
-	chart : {
-		style : {
-			fontFamily : "'Inconsolata', 'Droid Sans Mono', 'Consolas', sans-serif"
-		}
-	}
-});
+Highcharts
+		.setOptions({
+			chart : {
+				style : {
+					fontFamily : "'Inconsolata', 'Droid Sans Mono', 'Consolas', sans-serif"
+				}
+			}
+		});
+
+var tmChart;
 
 $(document).ready(function() {
 	tmChart = new Highcharts.Chart({
 		chart : {
 			renderTo : 'tmChart',
 			animation : false,
-			events : { load : randomData }
+			events : {
+				load : serverData
+			}
 		},
-		credits : { enabled : false },
+		credits : {
+			enabled : false
+		},
 		title : {
 			text : 'Thunderbird rocket telemetry',
 			style : {
@@ -21,13 +28,19 @@ $(document).ready(function() {
 				fontWeight : 'bold'
 			}
 		},
-		xAxis : { type : 'datetime' },
+		xAxis : {
+			type : 'datetime'
+		},
 		yAxis : [ { // Primary TM parameter
-			title : { text : 'TM1234 value' },
+			title : {
+				text : 'TM1234 value'
+			},
 			min : 0,
 			max : 1
 		}, { // Secondary TM parameter
-			title : { text : 'TM5678 value' },
+			title : {
+				text : 'TM5678 value'
+			},
 			min : 0,
 			max : 1000,
 			opposite : true
@@ -36,67 +49,30 @@ $(document).ready(function() {
 			name : 'TM1234',
 			yAxis : 0,
 			type : 'spline',
-			data : (function() {
-				// generate an array of random data
-				var data = [], time = (new Date()).getTime(), i;
-
-				for (i = -19; i <= 0; i++) {
-					data.push({
-						x : time + i * 1000,
-						y : Math.random()
-					});
-				}
-				return data;
-			})()
+			data : []
 		}, {
 			name : 'TM5678',
 			yAxis : 1,
 			type : 'spline',
-			data : (function() {
-				// generate an array of random data
-				var data = [], time = (new Date()).getTime(), i;
-
-				for (i = -19; i <= 0; i++) {
-					data.push({
-						x : time + i * 1000,
-						y : Math.random() * 1000
-					});
-				}
-				return data;
-			})()
+			data : []
 		} ]
 	});
 });
 
-/**
- * Plot a random point for each TM type each second.
- */
-function randomData() {
-	var tm1234 = this.series[0];
-	var tm5678 = this.series[1];
-
-	setInterval(function() {
-		x = (new Date()).getTime();
-		y1 = Math.random();
-		y2 = Math.random() * 1000;
-		tm1234.addPoint([ x, y1 ], true, true);
-		tm5678.addPoint([ x, y2 ], true, true);
-	}, 1000);
-}
 
 /**
  * Retrieve new data points from the Nest every second.
  */
 function serverData() {
-	var tm1234 = this.series[0];
-	var tm5678 = this.series[1];
-
 	$.ajax({
-		url : 'nest-url',
+		url : '/nest/get/TM1234,TM5678',
 		success : function(data) {
-			x = (new Date()).getTime();
-
+			tm1234 = data['TM1234'];
+			tm5678 = data['TM5678'];
+			
 			// add the points
+			tmChart.series[0].addPoint([ Date.parse(tm1234['time']), tm1234['data'] ], true, tmChart.series[0].data.length > 20);
+			tmChart.series[1].addPoint([ Date.parse(tm5678['time']), tm5678['data'] * 1000 ], true, tmChart.series[1].data.length > 20);
 
 			// call it again after one second
 			setTimeout(serverData, 1000);
