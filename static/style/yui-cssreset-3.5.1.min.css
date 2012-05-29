@@ -8,34 +8,6 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
 
 /* Also load our embedded fonts */
 @font-face {
-    font-family: 'Philosopher';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Philosopher'), url('/static/fonts/Philosopher-Regular.ttf') format('woff');
-}
-
-@font-face {
-    font-family: 'Philosopher';
-    font-style: italic;
-    font-weight: bold;
-    src: local('Philosopher Bold Italic'), local('Philosopher-BoldItalic'), url('/static/fonts/Philosopher-BoldItalic.ttf') format('woff');
-}
-
-@font-face {
-    font-family: 'Philosopher';
-    font-style: normal;
-    font-weight: bold;
-    src: local('Philosopher Bold'), local('Philosopher-Bold'), url('/static/fonts/Philosopher-Bold.ttf') format('woff');
-}
-
-@font-face {
-    font-family: 'Philosopher';
-    font-style: italic;
-    font-weight: normal;
-    src: local('Philosopher Italic'), local('Philosopher-Italic'), url('/static/fonts/Philosopher-Italic.ttf') format('woff');
-}
-
-@font-face {
     font-family: 'Molengo';
     font-style: normal;
     font-weight: normal;
@@ -47,4 +19,11 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     font-style: normal;
     font-weight: 600;
     src: local('Signika Semi Bold'), url('/static/fonts/Signika-Semibold.ttf') format('woff');
+}
+
+@font-face {
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Inconsolata'), url('/static/fonts/Inconsolata.ttf') format('woff');
 }

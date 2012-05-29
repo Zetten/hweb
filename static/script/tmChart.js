@@ -1,28 +1,33 @@
+Highcharts.setOptions({
+	chart : {
+		style : {
+			fontFamily : "'Inconsolata', 'Droid Sans Mono', 'Consolas', sans-serif"
+		}
+	}
+});
+
 $(document).ready(function() {
 	tmChart = new Highcharts.Chart({
 		chart : {
 			renderTo : 'tmChart',
 			animation : false,
-			events : {
-				load : randomData
+			events : { load : randomData }
+		},
+		credits : { enabled : false },
+		title : {
+			text : 'Thunderbird rocket telemetry',
+			style : {
+				fontFamily : "'Signika', 'Lucida Sans Unicode', serif",
+				fontWeight : 'bold'
 			}
 		},
-		title : {
-			text : 'Thunderbird rocket telemetry'
-		},
-		xAxis : {
-			type : 'datetime'
-		},
+		xAxis : { type : 'datetime' },
 		yAxis : [ { // Primary TM parameter
-			title : {
-				text : 'TM1234 value'
-			},
+			title : { text : 'TM1234 value' },
 			min : 0,
 			max : 1
 		}, { // Secondary TM parameter
-			title : {
-				text : 'TM5678 value'
-			},
+			title : { text : 'TM5678 value' },
 			min : 0,
 			max : 1000,
 			opposite : true
