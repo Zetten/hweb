@@ -18,9 +18,7 @@ $(document).ready(function() {
 				load : serverData
 			}
 		},
-		credits : {
-			enabled : false
-		},
+		credits : { enabled : false },
 		title : {
 			text : 'Thunderbird rocket telemetry',
 			style : {
@@ -32,26 +30,22 @@ $(document).ready(function() {
 			type : 'datetime'
 		},
 		yAxis : [ { // Primary TM parameter
-			title : {
-				text : 'TM1234 value'
-			},
-			min : 0,
-			max : 1
+			title : { text : 'Azimuth' },
+//			min : 0,
+//			max : 10
 		}, { // Secondary TM parameter
-			title : {
-				text : 'TM5678 value'
-			},
-			min : 0,
-			max : 1000,
+			title : { text : 'Elevation' },
+//			min : 0,
+//			max : 1000,
 			opposite : true
 		}, ],
 		series : [ {
-			name : 'TM1234',
+			name : 'Azimuth',
 			yAxis : 0,
 			type : 'spline',
 			data : []
 		}, {
-			name : 'TM5678',
+			name : 'Elevation',
 			yAxis : 1,
 			type : 'spline',
 			data : []
@@ -59,27 +53,34 @@ $(document).ready(function() {
 	});
 });
 
-
 /**
  * Retrieve new data points from the Nest every second.
  */
 function serverData() {
-	$.ajax({
-		url : '/nest/get/TM1234,TM5678',
-		success : function(data) {
-			tm1234 = data['TM1234'];
-			tm5678 = data['TM5678'];
-			
-			// add the points
-			tmChart.series[0].addPoint([ Date.parse(tm1234['time']), tm1234['data'] ], true, tmChart.series[0].data.length > 20);
-			tmChart.series[1].addPoint([ Date.parse(tm5678['time']), tm5678['data'] * 1000 ], true, tmChart.series[1].data.length > 20);
-
-			// call it again after one second
-			setTimeout(serverData, 1000);
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			alert("AJAX request failed with status: " + textStatus);
-		},
-		cache : false
-	});
+	if (tmChart) {
+		$.ajax({
+			url : '/nest/get/Azimuth/last/1',
+			dataType : 'json',
+			async : true,
+			success : function(data) {
+				param1 = data['Azimuth'][0];
+				p1time = new Date(param1['receivedTime']);
+				p1value = param1['value'];
+				tmChart.series[0].addPoint({x : p1time, y : p1value}, true, tmChart.series[0].data.length > 30);
+			}
+		});
+		$.ajax({
+			url : '/nest/get/Elevation/last/1',
+			dataType : 'json',
+			async : true,
+			success : function(data) {
+				param2 = data['Elevation'][0];
+				p2time = new Date(param2['receivedTime']);
+				p2value = param2['value'];
+				tmChart.series[1].addPoint({x : p2time, y : p2value}, true, tmChart.series[0].data.length > 30);
+			}
+		});
+	}
+	
+	setTimeout(serverData, 1000);
 }
