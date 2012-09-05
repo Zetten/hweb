@@ -10,7 +10,6 @@ def store(raw):
     parameters = parameterGroup['org.hbird.core.spacesystemmodel.tmtcgroups.HummingbirdParameterGroup']['parameters']['entry']
     
     for param in parameters:
-        log.info("process")
         pData = param['org.hbird.core.spacesystemmodel.parameters.HummingbirdParameter']
         pName = pData['name']
         pTime = pData['receivedTime']

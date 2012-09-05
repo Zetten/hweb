@@ -8,6 +8,7 @@ Highcharts
 		});
 
 var tmChart;
+var tmParams = ['Azimuth', 'Elevation'];
 
 $(document).ready(function() {
 	tmChart = new Highcharts.Chart({
@@ -30,22 +31,18 @@ $(document).ready(function() {
 			type : 'datetime'
 		},
 		yAxis : [ { // Primary TM parameter
-			title : { text : 'Azimuth' },
-//			min : 0,
-//			max : 10
+			title : { text : tmParams[0] },
 		}, { // Secondary TM parameter
-			title : { text : 'Elevation' },
-//			min : 0,
-//			max : 1000,
+			title : { text : tmParams[1] },
 			opposite : true
 		}, ],
 		series : [ {
-			name : 'Azimuth',
+			name : tmParams[0],
 			yAxis : 0,
 			type : 'spline',
 			data : []
 		}, {
-			name : 'Elevation',
+			name : tmParams[1],
 			yAxis : 1,
 			type : 'spline',
 			data : []
@@ -58,29 +55,25 @@ $(document).ready(function() {
  */
 function serverData() {
 	if (tmChart) {
-		$.ajax({
-			url : '/nest/get/Azimuth/last/1',
-			dataType : 'json',
-			async : true,
-			success : function(data) {
-				param1 = data['Azimuth'][0];
-				p1time = new Date(param1['receivedTime']);
-				p1value = param1['value'];
-				tmChart.series[0].addPoint({x : p1time, y : p1value}, true, tmChart.series[0].data.length > 30);
-			}
-		});
-		$.ajax({
-			url : '/nest/get/Elevation/last/1',
-			dataType : 'json',
-			async : true,
-			success : function(data) {
-				param2 = data['Elevation'][0];
-				p2time = new Date(param2['receivedTime']);
-				p2value = param2['value'];
-				tmChart.series[1].addPoint({x : p2time, y : p2value}, true, tmChart.series[0].data.length > 30);
-			}
-		});
+		tmParams.forEach(getAjaxParamData);
 	}
 	
 	setTimeout(serverData, 1000);
 }
+
+function getAjaxParamData(element, idx, array) {
+	$.ajax({
+		url : '/nest/get/'+element+'/last/1',
+		dataType : 'json',
+		async : true,
+		success : function(data) {
+			param = data[element][0];
+			time = new Date(param['receivedTime']);
+			value = param['value'];
+			tmChart.series[idx].addPoint({x : time, y : value}, true, tmChart.series[idx].data.length > 30);
+		}
+	});
+}
+
+
+
